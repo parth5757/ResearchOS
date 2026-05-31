@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg0: #0a0c10;
+  --bg1: #0f1218;
+  --bg2: #151a22;
+  --bg3: #1c2330;
+  --bg4: #232d3d;
+  --border: #2a3548;
+  --border2: #354460;
+  --gold: #c9933a;
+  --gold2: #e8b45a;
+  --gold3: #f5d080;
+  --teal: #2dd4bf;
+  --teal2: #5eead4;
+  --red: #f87171;
+  --red2: rgba(248,113,113,0.15);
+  --green: #4ade80;
+  --green2: rgba(74,222,128,0.12);
+  --purple: #a78bfa;
+  --purple2: rgba(167,139,250,0.12);
+  --blue: #60a5fa;
+  --text0: #f0f4ff;
+  --text1: #c8d4e8;
+  --text2: #8896aa;
+  --text3: #556070;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --radius: 8px;
+  --radius-lg: 14px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.5);
+  --shadow-lg: 0 8px 48px rgba(0,0,0,0.6);
+}
+
+html, body, #root { height: 100%; background: var(--bg0); color: var(--text0); font-family: var(--font-sans); }
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg1); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+a { color: var(--gold2); text-decoration: none; }
+a:hover { color: var(--gold3); }
+
+input, textarea, select {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text0);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  padding: 8px 12px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,147,58,0.12);
+}
+select option { background: var(--bg2); color: var(--text0); }
+textarea { resize: vertical; line-height: 1.6; }
+
+button { cursor: pointer; font-family: var(--font-sans); }
+
+.Toastify__toast { background: var(--bg2) !important; border: 1px solid var(--border2) !important; color: var(--text0) !important; font-family: var(--font-sans) !important; font-size: 13px !important; }
+.Toastify__toast--success .Toastify__progress-bar { background: var(--green) !important; }
+.Toastify__toast--error .Toastify__progress-bar { background: var(--red) !important; }
+.Toastify__close-button { color: var(--text2) !important; }
