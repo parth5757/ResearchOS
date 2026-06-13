@@ -1,13 +1,13 @@
 import React from 'react';
 
-export function PageHeader({ title, accent, sub, action }) {
+export function PageHeader({ title, accent, sub, subtitle, action }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>
       <div>
         <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 26, color: 'var(--text0)', fontWeight: 700 }}>
           {title} {accent && <span style={{ color: 'var(--gold2)' }}>{accent}</span>}
         </h1>
-        {sub && <p style={{ fontSize: 13, color: 'var(--text2)', marginTop: 4 }}>{sub}</p>}
+        {(sub || subtitle) && <p style={{ fontSize: 13, color: 'var(--text2)', marginTop: 4 }}>{sub || subtitle}</p>}
       </div>
       {action && <div>{action}</div>}
     </div>
@@ -101,12 +101,45 @@ export function Modal({ title, onClose, children, width = 580 }) {
   );
 }
 
-export function EmptyState({ icon, title, sub }) {
+export function EmptyState({ icon, title, sub, message }) {
   return (
     <div style={{ textAlign: 'center', padding: '52px 20px', color: 'var(--text3)' }}>
       <div style={{ fontSize: 40, marginBottom: 12 }}>{icon}</div>
-      <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text2)' }}>{title}</div>
+      <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text2)' }}>{title || message}</div>
       {sub && <div style={{ fontSize: 13, marginTop: 6 }}>{sub}</div>}
+    </div>
+  );
+}
+
+export function Badge({ children, color, textColor, style }) {
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', padding: '2px 8px',
+      borderRadius: 20, fontSize: 11, fontFamily: 'var(--font-mono)',
+      background: color || 'var(--bg3)',
+      color: textColor || '#fff',
+      fontWeight: 600,
+      ...style,
+    }}>
+      {children}
+    </span>
+  );
+}
+
+export function ConfirmModal({ message, onConfirm, onCancel }) {
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 300, backdropFilter: 'blur(4px)' }}>
+      <div style={{ background: 'var(--bg1)', border: '1px solid var(--border2)', borderRadius: 12, padding: 28, maxWidth: 400, width: '90%', boxShadow: 'var(--shadow-lg)' }}>
+        <div style={{ fontSize: 15, color: 'var(--text0)', marginBottom: 20 }}>{message}</div>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button onClick={onConfirm} style={{ padding: '8px 18px', background: 'var(--red2)', color: 'var(--red)', border: '1px solid rgba(248,113,113,0.3)', borderRadius: 8, fontWeight: 600, cursor: 'pointer', fontSize: 13 }}>
+            Delete
+          </button>
+          <button onClick={onCancel} style={{ padding: '8px 18px', background: 'transparent', color: 'var(--text2)', border: '1px solid var(--border2)', borderRadius: 8, fontSize: 13, cursor: 'pointer' }}>
+            Cancel
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

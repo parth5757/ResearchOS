@@ -6,12 +6,15 @@ import { Card, CardTitle, ProgressRing, NoProject } from '../components/Shared';
 const PHASES = [
   { key: 'domain', label: 'Domain Selection', icon: '◎', to: '/domain', desc: 'Define your research area' },
   { key: 'literature', label: 'Literature Review', icon: '📄', to: '/literature', desc: 'Record & annotate papers' },
+  { key: 'paper-readings', label: 'Paper Readings', icon: '🔬', to: '/paper-readings', desc: 'Deep-dive paper annotations' },
+  { key: 'survey-readings', label: 'Survey Readings', icon: '🗺', to: '/survey-readings', desc: 'Survey / review paper notes' },
   { key: 'problems', label: 'Problem Definition', icon: '⚠', to: '/problems', desc: 'Classify research problems' },
   { key: 'hypothesis', label: 'Hypothesis Workshop', icon: '⚡', to: '/hypothesis', desc: 'Generate, rank, evolve ideas' },
   { key: 'feasibility', label: 'Feasibility Analysis', icon: '📊', to: '/feasibility', desc: 'Assess data, compute, time' },
   { key: 'proposal', label: 'Thesis Proposal', icon: '📋', to: '/proposal', desc: 'Build proposal document' },
   { key: 'log', label: 'Research Log', icon: '📅', to: '/log', desc: 'Daily progress tracking' },
   { key: 'thesis', label: 'Thesis Writer', icon: '📖', to: '/thesis', desc: 'Write your complete thesis' },
+  { key: 'venues', label: 'Journals & Conferences', icon: '🏛', to: '/venues', desc: 'Track publication venues' },
 ];
 
 export default function Dashboard() {
@@ -55,9 +58,12 @@ export default function Dashboard() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 20 }}>
         {[
           { n: dashboard?.papers || 0, l: 'Papers Reviewed' },
+          { n: dashboard?.paper_readings || 0, l: 'Paper Readings' },
+          { n: dashboard?.survey_readings || 0, l: 'Survey Readings' },
           { n: dashboard?.problems || 0, l: 'Problems Defined' },
           { n: dashboard?.hypotheses || 0, l: 'Hypotheses' },
           { n: dashboard?.logs || 0, l: 'Log Entries' },
+          { n: dashboard?.venues || 0, l: 'Venues Tracked' },
         ].map((s, i) => (
           <div key={i} style={{ background: 'var(--bg1)', border: '1px solid var(--border)', borderRadius: 10, padding: '14px 16px' }}>
             <div style={{ fontSize: 30, fontFamily: 'var(--font-mono)', fontWeight: 500, color: 'var(--gold2)' }}>{s.n}</div>

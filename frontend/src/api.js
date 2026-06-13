@@ -55,3 +55,23 @@ export const getThesisChapters = (pid) => API.get(`/projects/${pid}/thesis/`);
 export const saveThesisChapter = (pid, data) => API.post(`/projects/${pid}/thesis/by_key/`, data);
 
 export default API;
+
+// Paper Readings
+export const getPaperReadings = (pid, params) => API.get(`/projects/${pid}/paper-readings/`, { params });
+export const createPaperReading = (pid, data) => API.post(`/projects/${pid}/paper-readings/`, data);
+export const updatePaperReading = (pid, id, data) => API.patch(`/projects/${pid}/paper-readings/${id}/`, data);
+export const deletePaperReading = (pid, id) => API.delete(`/projects/${pid}/paper-readings/${id}/`);
+export const setPaperReadingProblems = (pid, id, data) => API.post(`/projects/${pid}/paper-readings/${id}/set_problems/`, data);
+
+// Survey Readings
+export const getSurveyReadings = (pid, params) => API.get(`/projects/${pid}/survey-readings/`, { params });
+export const createSurveyReading = (pid, data) => API.post(`/projects/${pid}/survey-readings/`, data);
+export const updateSurveyReading = (pid, id, data) => API.patch(`/projects/${pid}/survey-readings/${id}/`, data);
+export const deleteSurveyReading = (pid, id) => API.delete(`/projects/${pid}/survey-readings/${id}/`);
+export const setSurveyReadingProblems = (pid, id, data) => API.post(`/projects/${pid}/survey-readings/${id}/set_problems/`, data);
+
+// Venues
+export const getVenues = (pid, params) => API.get(`/projects/${pid}/venues/`, { params });
+export const createVenue = (pid, data) => API.post(`/projects/${pid}/venues/`, data);
+export const updateVenue = (pid, id, data) => API.patch(`/projects/${pid}/venues/${id}/`, data);
+export const deleteVenue = (pid, id) => API.delete(`/projects/${pid}/venues/${id}/`);

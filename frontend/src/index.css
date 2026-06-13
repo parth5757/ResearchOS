@@ -70,3 +70,18 @@ button { cursor: pointer; font-family: var(--font-sans); }
 .Toastify__toast--success .Toastify__progress-bar { background: var(--green) !important; }
 .Toastify__toast--error .Toastify__progress-bar { background: var(--red) !important; }
 .Toastify__close-button { color: var(--text2) !important; }
+
+.btn-primary {
+  padding: 9px 18px;
+  background: var(--gold);
+  color: #0a0c10;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: opacity 0.15s;
+}
+.btn-primary:hover { opacity: 0.88; }
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }

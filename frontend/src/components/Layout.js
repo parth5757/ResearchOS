@@ -9,6 +9,8 @@ const NAV = [
   { section: 'Research Phases' },
   { to: '/domain', label: 'Domain Selection', icon: '◎' },
   { to: '/literature', label: 'Literature Review', icon: '📄' },
+  { to: '/paper-readings', label: 'Paper Readings', icon: '🔬' },
+  { to: '/survey-readings', label: 'Survey Readings', icon: '🗺' },
   { to: '/problems', label: 'Problem Definition', icon: '⚠' },
   { to: '/hypothesis', label: 'Hypothesis Workshop', icon: '⚡' },
   { to: '/feasibility', label: 'Feasibility Analysis', icon: '📊' },
@@ -16,6 +18,8 @@ const NAV = [
   { section: 'Execution & Writing' },
   { to: '/log', label: 'Research Log', icon: '📅' },
   { to: '/thesis', label: 'Thesis Writer', icon: '📖' },
+  { section: 'Publication' },
+  { to: '/venues', label: 'Journals & Conferences', icon: '🏛' },
 ];
 
 export default function Layout({ children }) {
@@ -53,7 +57,7 @@ export default function Layout({ children }) {
     return map[key] || 0;
   };
 
-  const overall = NAV.filter(n => n.to && n.to !== '/').reduce((s, n) => s + pct(n.to), 0) / 8;
+  const overall = NAV.filter(n => n.to && n.to !== '/').reduce((s, n) => s + pct(n.to), 0) / 11;
 
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>

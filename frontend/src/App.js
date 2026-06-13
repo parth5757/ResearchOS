@@ -14,6 +14,9 @@ import Feasibility from './pages/Feasibility';
 import Proposal from './pages/Proposal';
 import Log from './pages/Log';
 import Thesis from './pages/Thesis';
+import PaperReadings from './pages/PaperReadings';
+import SurveyReadings from './pages/SurveyReadings';
+import Venues from './pages/Venues';
 
 export default function App() {
   return (
@@ -30,6 +33,9 @@ export default function App() {
             <Route path="/proposal" element={<Proposal />} />
             <Route path="/log" element={<Log />} />
             <Route path="/thesis" element={<Thesis />} />
+            <Route path="/paper-readings" element={<PaperReadings />} />
+            <Route path="/survey-readings" element={<SurveyReadings />} />
+            <Route path="/venues" element={<Venues />} />
           </Routes>
         </Layout>
         <ToastContainer
