@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import (Project, Domain, Paper, Problem, Hypothesis,
-                     Feasibility, Proposal, ResearchLog, ThesisChapter)
+                     Feasibility, Proposal, ResearchLog, ThesisChapter,
+                     PaperReading, SurveyReading, VenueTracker)
 
 
 class DomainSerializer(serializers.ModelSerializer):
@@ -106,3 +107,47 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     def get_has_domain(self, obj):
         return hasattr(obj, 'domain')
+
+
+class PaperReadingSerializer(serializers.ModelSerializer):
+    related_problems_ids = serializers.PrimaryKeyRelatedField(
+        source='related_problems', many=True, read_only=True
+    )
+    related_problems_titles = serializers.SerializerMethodField()
+    linked_paper_title = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PaperReading
+        fields = '__all__'
+
+    def get_related_problems_titles(self, obj):
+        return [{'id': p.id, 'title': p.title} for p in obj.related_problems.all()]
+
+    def get_linked_paper_title(self, obj):
+        return obj.linked_paper.title if obj.linked_paper else ''
+
+
+class SurveyReadingSerializer(serializers.ModelSerializer):
+    related_problems_titles = serializers.SerializerMethodField()
+
+    class Meta:
+        model = SurveyReading
+        fields = '__all__'
+
+    def get_related_problems_titles(self, obj):
+        return [{'id': p.id, 'title': p.title} for p in obj.related_problems.all()]
+
+
+class VenueTrackerSerializer(serializers.ModelSerializer):
+    days_to_deadline = serializers.SerializerMethodField()
+
+    class Meta:
+        model = VenueTracker
+        fields = '__all__'
+
+    def get_days_to_deadline(self, obj):
+        if not obj.submission_deadline:
+            return None
+        from datetime import date
+        delta = (obj.submission_deadline - date.today()).days
+        return delta

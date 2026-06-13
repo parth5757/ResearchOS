@@ -33,3 +33,17 @@ urlpatterns = router.urls + [
     # Dashboard
     path('projects/<int:pk>/dashboard/', views.ProjectViewSet.as_view({'get': 'dashboard'})),
 ]
+
+# Paper Readings
+urlpatterns += [
+    path('projects/<int:project_pk>/paper-readings/', views.PaperReadingViewSet.as_view({'get': 'list', 'post': 'create'})),
+    path('projects/<int:project_pk>/paper-readings/<int:pk>/', views.PaperReadingViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'})),
+    path('projects/<int:project_pk>/paper-readings/<int:pk>/set_problems/', views.PaperReadingViewSet.as_view({'post': 'set_problems'})),
+    # Survey Readings
+    path('projects/<int:project_pk>/survey-readings/', views.SurveyReadingViewSet.as_view({'get': 'list', 'post': 'create'})),
+    path('projects/<int:project_pk>/survey-readings/<int:pk>/', views.SurveyReadingViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'})),
+    path('projects/<int:project_pk>/survey-readings/<int:pk>/set_problems/', views.SurveyReadingViewSet.as_view({'post': 'set_problems'})),
+    # Venue Tracker
+    path('projects/<int:project_pk>/venues/', views.VenueTrackerViewSet.as_view({'get': 'list', 'post': 'create'})),
+    path('projects/<int:project_pk>/venues/<int:pk>/', views.VenueTrackerViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'})),
+]

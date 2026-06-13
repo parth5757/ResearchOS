@@ -184,6 +184,168 @@ class ResearchLog(models.Model):
         return f"Log {self.date} - {self.phase}"
 
 
+class PaperReading(models.Model):
+    """Track detailed reading notes for a research paper."""
+    PAPER_TYPE_CHOICES = [
+        ('research', 'Research Paper'),
+        ('survey', 'Survey Paper'),
+        ('review', 'Review Article'),
+        ('conference', 'Conference Paper'),
+        ('preprint', 'Preprint / arXiv'),
+        ('book_chapter', 'Book Chapter'),
+    ]
+    READING_STATUS_CHOICES = [
+        ('to_read', 'To Read'),
+        ('reading', 'Currently Reading'),
+        ('done', 'Done'),
+        ('revisit', 'Needs Revisit'),
+    ]
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='paper_readings')
+    # Linked to existing Paper record (optional)
+    linked_paper = models.ForeignKey(Paper, on_delete=models.SET_NULL, null=True, blank=True, related_name='readings')
+    # Linked to Problem(s) — comma separated IDs stored as text for simplicity
+    related_problems = models.ManyToManyField(Problem, blank=True, related_name='paper_readings')
+
+    # Paper info (filled even if no linked_paper)
+    title = models.CharField(max_length=600)
+    authors = models.CharField(max_length=400, blank=True)
+    year = models.CharField(max_length=10, blank=True)
+    source = models.CharField(max_length=300, blank=True, help_text='Journal / Conference / arXiv ID')
+    paper_type = models.CharField(max_length=20, choices=PAPER_TYPE_CHOICES, default='research')
+    url_or_doi = models.CharField(max_length=400, blank=True)
+
+    # Reading status
+    status = models.CharField(max_length=10, choices=READING_STATUS_CHOICES, default='to_read')
+    date_read = models.DateField(null=True, blank=True)
+
+    # Core annotations
+    problem_addressed = models.TextField(blank=True, help_text='Which problem does this paper address?')
+    solutions_found = models.TextField(blank=True, help_text='What solutions / methods did the paper propose?')
+    key_contributions = models.TextField(blank=True, help_text='Main contributions of the paper')
+    datasets_used = models.TextField(blank=True, help_text='Datasets / benchmarks used')
+    results_summary = models.TextField(blank=True, help_text='Key results and metrics')
+    unsolved_issues = models.TextField(blank=True, help_text='Problems still unsolved / limitations noted')
+    future_work = models.TextField(blank=True, help_text='Future work directions mentioned')
+    my_critique = models.TextField(blank=True, help_text='Your critical analysis / disagreements')
+    how_it_helps_me = models.TextField(blank=True, help_text='How does this paper help your own research?')
+    important_references = models.TextField(blank=True, help_text='Other papers cited here that you should read')
+    personal_notes = models.TextField(blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-date_read', '-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class SurveyReading(models.Model):
+    """Track detailed reading notes specifically for survey / review papers."""
+    READING_STATUS_CHOICES = [
+        ('to_read', 'To Read'),
+        ('reading', 'Currently Reading'),
+        ('done', 'Done'),
+        ('revisit', 'Needs Revisit'),
+    ]
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='survey_readings')
+    related_problems = models.ManyToManyField(Problem, blank=True, related_name='survey_readings')
+
+    title = models.CharField(max_length=600)
+    authors = models.CharField(max_length=400, blank=True)
+    year = models.CharField(max_length=10, blank=True)
+    source = models.CharField(max_length=300, blank=True)
+    url_or_doi = models.CharField(max_length=400, blank=True)
+
+    status = models.CharField(max_length=10, choices=READING_STATUS_CHOICES, default='to_read')
+    date_read = models.DateField(null=True, blank=True)
+
+    # Survey-specific fields
+    domain_covered = models.TextField(blank=True, help_text='What domain / sub-field does this survey cover?')
+    taxonomy = models.TextField(blank=True, help_text='How does the survey classify / categorise the field?')
+    papers_covered_count = models.IntegerField(null=True, blank=True, help_text='Approx. number of papers reviewed')
+    time_span_covered = models.CharField(max_length=100, blank=True, help_text='e.g. 2010–2024')
+    problem_landscape = models.TextField(blank=True, help_text='What problems exist in this field according to the survey?')
+    existing_solutions = models.TextField(blank=True, help_text='What solutions / approaches exist?')
+    open_challenges = models.TextField(blank=True, help_text='Open challenges and research gaps identified')
+    future_directions = models.TextField(blank=True, help_text='Future research directions mentioned')
+    benchmark_datasets = models.TextField(blank=True, help_text='Standard datasets / benchmarks in this field')
+    key_papers_to_read = models.TextField(blank=True, help_text='Individual papers cited that you must read')
+    relevance_to_my_work = models.TextField(blank=True, help_text='How does this survey relate to your research?')
+    personal_notes = models.TextField(blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-date_read', '-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class VenueTracker(models.Model):
+    """Track target publication venues: journals, conferences, workshops."""
+    VENUE_TYPE_CHOICES = [
+        ('journal', 'Journal'),
+        ('conference', 'Conference'),
+        ('workshop', 'Workshop'),
+        ('symposium', 'Symposium'),
+        ('arxiv', 'arXiv / Preprint'),
+    ]
+    SUBMISSION_STATUS_CHOICES = [
+        ('target', 'Target (Not Submitted)'),
+        ('preparing', 'Preparing Submission'),
+        ('submitted', 'Submitted'),
+        ('under_review', 'Under Review'),
+        ('accepted', 'Accepted'),
+        ('rejected', 'Rejected'),
+        ('withdrawn', 'Withdrawn'),
+    ]
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='venues')
+    name = models.CharField(max_length=400)
+    abbreviation = models.CharField(max_length=100, blank=True, help_text='e.g. NeurIPS, IEEE TPAMI')
+    venue_type = models.CharField(max_length=15, choices=VENUE_TYPE_CHOICES, default='journal')
+    url = models.CharField(max_length=400, blank=True)
+
+    # Publication details
+    publisher = models.CharField(max_length=200, blank=True)
+    issn_isbn = models.CharField(max_length=100, blank=True)
+    impact_factor = models.CharField(max_length=50, blank=True)
+    h_index = models.CharField(max_length=50, blank=True)
+    quartile = models.CharField(max_length=20, blank=True, help_text='e.g. Q1, Q2, SCI, Scopus')
+    acceptance_rate = models.CharField(max_length=50, blank=True, help_text='e.g. ~25%')
+
+    # Scope & fit
+    scope = models.TextField(blank=True, help_text='Topics / scope of this venue')
+    why_suitable = models.TextField(blank=True, help_text='Why is this venue suitable for your work?')
+    page_limit = models.CharField(max_length=100, blank=True)
+    submission_format = models.CharField(max_length=200, blank=True, help_text='e.g. LaTeX, IEEE template')
+
+    # Deadlines & dates (for conferences)
+    submission_deadline = models.DateField(null=True, blank=True)
+    notification_date = models.DateField(null=True, blank=True)
+    camera_ready_date = models.DateField(null=True, blank=True)
+    event_date = models.CharField(max_length=100, blank=True, help_text='Conference/event date or month')
+
+    # Tracking
+    status = models.CharField(max_length=15, choices=SUBMISSION_STATUS_CHOICES, default='target')
+    submission_date = models.DateField(null=True, blank=True)
+    paper_id_received = models.CharField(max_length=200, blank=True, help_text='Paper ID / submission ID')
+    review_notes = models.TextField(blank=True, help_text='Reviewer feedback / notes')
+    notes = models.TextField(blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.name
+
+
 class ThesisChapter(models.Model):
     CHAPTER_CHOICES = [
         ('abstract', 'Abstract'),

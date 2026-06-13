@@ -3,10 +3,12 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from .models import (Project, Domain, Paper, Problem, Hypothesis,
-                     Feasibility, Proposal, ResearchLog, ThesisChapter)
+                     Feasibility, Proposal, ResearchLog, ThesisChapter,
+                     PaperReading, SurveyReading, VenueTracker)
 from .serializers import (ProjectSerializer, DomainSerializer, PaperSerializer,
                            ProblemSerializer, HypothesisSerializer, FeasibilitySerializer,
-                           ProposalSerializer, ResearchLogSerializer, ThesisChapterSerializer)
+                           ProposalSerializer, ResearchLogSerializer, ThesisChapterSerializer,
+                           PaperReadingSerializer, SurveyReadingSerializer, VenueTrackerSerializer)
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -26,6 +28,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
         thesis_words = sum(
             c.word_count for c in project.thesis_chapters.all()
         )
+        paper_readings = project.paper_readings.count()
+        survey_readings = project.survey_readings.count()
+        venues = project.venues.count()
         proposal_pct = 0
         if has_proposal:
             p = project.proposal
@@ -45,6 +50,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
             'has_proposal': has_proposal,
             'thesis_words': thesis_words,
             'proposal_pct': proposal_pct,
+            'paper_readings': paper_readings,
+            'survey_readings': survey_readings,
+            'venues': venues,
         })
 
 
@@ -247,3 +255,78 @@ class ThesisChapterViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
+
+class PaperReadingViewSet(viewsets.ModelViewSet):
+    serializer_class = PaperReadingSerializer
+
+    def get_queryset(self):
+        qs = PaperReading.objects.filter(project_id=self.kwargs.get('project_pk'))
+        status_filter = self.request.query_params.get('status')
+        search = self.request.query_params.get('search')
+        paper_type = self.request.query_params.get('paper_type')
+        if status_filter:
+            qs = qs.filter(status=status_filter)
+        if paper_type:
+            qs = qs.filter(paper_type=paper_type)
+        if search:
+            qs = qs.filter(title__icontains=search) | qs.filter(authors__icontains=search)
+        return qs.prefetch_related('related_problems')
+
+    def perform_create(self, serializer):
+        serializer.save(project_id=self.kwargs.get('project_pk'))
+
+    @action(detail=True, methods=['post'])
+    def set_problems(self, request, project_pk=None, pk=None):
+        reading = self.get_object()
+        problem_ids = request.data.get('problem_ids', [])
+        problems = Problem.objects.filter(project_id=project_pk, id__in=problem_ids)
+        reading.related_problems.set(problems)
+        reading.save()
+        return Response(PaperReadingSerializer(reading).data)
+
+
+class SurveyReadingViewSet(viewsets.ModelViewSet):
+    serializer_class = SurveyReadingSerializer
+
+    def get_queryset(self):
+        qs = SurveyReading.objects.filter(project_id=self.kwargs.get('project_pk'))
+        status_filter = self.request.query_params.get('status')
+        search = self.request.query_params.get('search')
+        if status_filter:
+            qs = qs.filter(status=status_filter)
+        if search:
+            qs = qs.filter(title__icontains=search) | qs.filter(authors__icontains=search)
+        return qs.prefetch_related('related_problems')
+
+    def perform_create(self, serializer):
+        serializer.save(project_id=self.kwargs.get('project_pk'))
+
+    @action(detail=True, methods=['post'])
+    def set_problems(self, request, project_pk=None, pk=None):
+        reading = self.get_object()
+        problem_ids = request.data.get('problem_ids', [])
+        problems = Problem.objects.filter(project_id=project_pk, id__in=problem_ids)
+        reading.related_problems.set(problems)
+        reading.save()
+        return Response(SurveyReadingSerializer(reading).data)
+
+
+class VenueTrackerViewSet(viewsets.ModelViewSet):
+    serializer_class = VenueTrackerSerializer
+
+    def get_queryset(self):
+        qs = VenueTracker.objects.filter(project_id=self.kwargs.get('project_pk'))
+        venue_type = self.request.query_params.get('venue_type')
+        status_filter = self.request.query_params.get('status')
+        search = self.request.query_params.get('search')
+        if venue_type:
+            qs = qs.filter(venue_type=venue_type)
+        if status_filter:
+            qs = qs.filter(status=status_filter)
+        if search:
+            qs = qs.filter(name__icontains=search) | qs.filter(abbreviation__icontains=search)
+        return qs
+
+    def perform_create(self, serializer):
+        serializer.save(project_id=self.kwargs.get('project_pk'))
